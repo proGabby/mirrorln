@@ -30,7 +30,7 @@ This document outlines the step-by-step roadmap for building Mirrorln, an enterp
 - [x] Task 4.1: Build broadcaster UI structure and responsive design styling.
 - [x] Task 4.2: Build client-side WebSocket communication service.
 - [x] Task 4.3: Implement Screen Capture API service for display, application, and tab streaming.
-- [ ] Task 4.4: Implement WebRTC host connection manager supporting multi-peer viewer distribution.
+- [x] Task 4.4: Implement WebRTC host connection manager supporting multi-peer viewer distribution.
 - [ ] Task 4.5: Implement Host UI controller coordinating capture, QR code rendering, and live stream state.
 
 ---
