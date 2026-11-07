@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mirrorln — Instant Screen Mirroring</title>
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/host.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon">📡</span>
+      <span class="brand-name">Mirrorln</span>
+    </div>
+    <div class="status-pill">
+      <span class="pulse-dot idle" id="status-indicator"></span>
+      <span id="status-text">Ready</span>
+    </div>
+  </header>
+
+  <div class="host-container">
+    <main class="host-main">
+      <!-- 1. Idle Setup Panel -->
+      <section id="setup-view" class="setup-card">
+        <h1>Share your screen instantly</h1>
+        <p>Broadcast your monitor, application window, or browser tab globally via a simple QR code with sub-second latency.</p>
+
+        <div class="setup-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="audio-toggle" checked />
+            <span>Include system / tab audio</span>
+          </label>
+        </div>
+
+        <button id="start-stream-btn" class="btn btn-primary btn-hero">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          Select Screen & Broadcast
+        </button>
+
+        <div class="setup-hint">
+          Works seamlessly even while simultaneously sharing your screen in Zoom, Google Meet, or interview tools.
+        </div>
+      </section>
+
+      <!-- 2. Active Broadcast Panel (Hidden initially) -->
+      <section id="active-view" class="broadcast-card hidden">
+        <div class="broadcast-grid">
+          <!-- Left: Live Preview -->
+          <div class="preview-pane">
+            <div class="pane-header">
+              <span class="badge-tag badge-live">● LIVE STREAM</span>
+              <span id="viewer-count" class="badge-tag badge-viewers">0 Viewers</span>
+            </div>
+
+            <div class="video-container">
+              <video id="preview-video" autoplay playsinline muted></video>
+            </div>
+
+            <div class="preview-actions">
+              <button id="stop-stream-btn" class="btn btn-danger">
+                Stop Sharing Screen
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Dynamic QR Code -->
+          <div class="share-pane">
+            <h2>Scan with any camera</h2>
+            <p>Anyone worldwide can scan this code to watch your screen in real time.</p>
+
+            <div id="qr-container" class="qr-box">
+              <!-- Rendered SVG inserted dynamically -->
+            </div>
+
+            <div class="link-input-group">
+              <input type="text" id="share-url-input" readonly />
+              <button id="copy-url-btn" class="btn btn-secondary">Copy</button>
+            </div>
+            <span id="copy-toast" class="copy-toast hidden">✓ Link copied to clipboard!</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/js/host.js"></script>
+</body>
+</html>
