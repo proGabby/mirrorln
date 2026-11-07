@@ -16,7 +16,7 @@ const config = require('../src/config');
 const networkUtil = require('../src/utils/network');
 
 async function runTests() {
-  console.log('🧪 Starting Mirrorln Test Suite...\n');
+  console.log('Starting Mirrorln Test Suite...\n');
 
   // Test 1: Configuration Module
   console.log('Test 1: Configuration Module');

@@ -2,7 +2,7 @@
  * WebRTC Host Peer Connection Pool Manager
  * 
  * Manages individual RTCPeerConnection instances for multiple concurrent viewers.
- * Coordinates SDP offer generation, track distribution, and ICE candidate exchange.
+ * Implements per-viewer ICE candidate queuing to prevent early candidate drops.
  */
 
 export class WebRtcHostManager {
@@ -17,6 +17,8 @@ export class WebRtcHostManager {
     this.iceServers = iceServers;
     this.callbacks = callbacks;
     this.connections = new Map(); // viewerId -> RTCPeerConnection
+    this.candidateQueues = new Map(); // viewerId -> Array<candidate>
+    this.remoteDescSet = new Map(); // viewerId -> boolean
     this.localStream = null;
   }
 
@@ -36,6 +38,9 @@ export class WebRtcHostManager {
     if (this.connections.has(viewerId)) {
       this.closeViewerConnection(viewerId);
     }
+
+    this.candidateQueues.set(viewerId, []);
+    this.remoteDescSet.set(viewerId, false);
 
     const pc = new RTCPeerConnection({
       iceServers: this.iceServers
@@ -88,6 +93,7 @@ export class WebRtcHostManager {
 
   /**
    * Applies SDP answer received from a viewer.
+   * Flushes queued ICE candidates for this viewer.
    * @param {string} viewerId 
    * @param {RTCSessionDescriptionInit} sdp 
    */
@@ -97,13 +103,25 @@ export class WebRtcHostManager {
 
     try {
       await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+      this.remoteDescSet.set(viewerId, true);
+
+      // Flush queued ICE candidates
+      const queue = this.candidateQueues.get(viewerId) || [];
+      while (queue.length > 0) {
+        const candidate = queue.shift();
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (e) {
+          console.warn(`Failed adding queued ICE candidate for viewer ${viewerId}:`, e);
+        }
+      }
     } catch (err) {
       console.error(`Error setting remote answer for viewer ${viewerId}:`, err);
     }
   }
 
   /**
-   * Applies ICE candidate received from a viewer.
+   * Applies or queues ICE candidate received from a viewer.
    * @param {string} viewerId 
    * @param {RTCIceCandidateInit} candidate 
    */
@@ -111,10 +129,17 @@ export class WebRtcHostManager {
     const pc = this.connections.get(viewerId);
     if (!pc || !candidate) return;
 
+    if (!this.remoteDescSet.get(viewerId)) {
+      const queue = this.candidateQueues.get(viewerId) || [];
+      queue.push(candidate);
+      this.candidateQueues.set(viewerId, queue);
+      return;
+    }
+
     try {
       await pc.addIceCandidate(new RTCIceCandidate(candidate));
     } catch (err) {
-      console.error(`Error adding ICE candidate for viewer ${viewerId}:`, err);
+      console.warn(`Error adding ICE candidate for viewer ${viewerId}:`, err);
     }
   }
 
@@ -124,6 +149,8 @@ export class WebRtcHostManager {
       pc.close();
       this.connections.delete(viewerId);
     }
+    this.candidateQueues.delete(viewerId);
+    this.remoteDescSet.delete(viewerId);
   }
 
   closeAll() {
@@ -131,6 +158,7 @@ export class WebRtcHostManager {
       pc.close();
     }
     this.connections.clear();
+    this.candidateQueues.clear();
+    this.remoteDescSet.clear();
   }
 }
-

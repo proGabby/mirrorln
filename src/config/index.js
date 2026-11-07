@@ -27,12 +27,22 @@ const config = {
   // Default ICE server matrix for WebRTC NAT traversal
   webrtc: {
     iceServers: [
+      // High-availability public STUN servers
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
       { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'stun:stun4.l.google.com:19302' },
-      // Optional TURN Relay fallback (configured via environment variables)
+      { urls: 'stun:stun.cloudflare.com:3478' },
+      // Open-relay TURN fallback for symmetric NATs and mobile carriers (4G/5G)
+      {
+        urls: [
+          'turn:openrelay.metered.ca:80',
+          'turn:openrelay.metered.ca:443',
+          'turn:openrelay.metered.ca:443?transport=tcp'
+        ],
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      // Custom TURN server credentials via environment variables (if provided)
       ...(process.env.TURN_URL ? [{
         urls: process.env.TURN_URL,
         username: process.env.TURN_USERNAME,

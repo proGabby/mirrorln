@@ -44,7 +44,7 @@ httpServer.listen(config.server.port, config.server.host, () => {
   const urls = networkUtil.getAccessUrls(config.server.port);
 
   console.log(`\n======================================================`);
-  console.log(`  📡 Mirrorln WebRTC Screen Mirroring Platform`);
+  console.log(`  Mirrorln WebRTC Screen Mirroring Platform`);
   console.log(`------------------------------------------------------`);
   console.log(`  Local URL:        ${urls.local}`);
   urls.network.forEach((url) => {

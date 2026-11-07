@@ -71,6 +71,10 @@ class ViewerController {
 
     this.wsClient.on('webrtc-offer', async ({ sdp, hostId }) => {
       this.hostId = hostId;
+      this.overlayHeading.innerText = 'Host Found';
+      this.overlaySubtext.innerText = 'Negotiating encrypted video channel...';
+      this.streamStatusText.innerText = 'Connecting...';
+
       try {
         const answer = await this.webrtcManager.handleOffer(sdp);
         this.wsClient.send('webrtc-answer', {
@@ -117,17 +121,27 @@ class ViewerController {
   async _onRemoteStreamReceived(stream) {
     this.video.srcObject = stream;
 
+    // Detect if stream carries audio
+    const hasAudio = stream.getAudioTracks().length > 0;
+
     try {
-      // Attempt unmuted autoplay
       await this.video.play();
       this._setLiveState();
+      if (hasAudio) {
+        this.unmuteBtn.classList.remove('hidden');
+      }
     } catch (err) {
-      console.warn('Autoplay with unmuted audio prevented by browser policy:', err);
-      // Fallback: Mute and play, then present Unmute button
+      console.warn('Initial playback issue, retrying with muted state:', err);
       this.video.muted = true;
-      await this.video.play();
-      this._setLiveState();
-      this.unmuteBtn.classList.remove('hidden');
+      try {
+        await this.video.play();
+        this._setLiveState();
+        if (hasAudio) {
+          this.unmuteBtn.classList.remove('hidden');
+        }
+      } catch (playErr) {
+        console.error('Video playback completely failed:', playErr);
+      }
     }
   }
 
@@ -138,8 +152,12 @@ class ViewerController {
   }
 
   _onConnectionStateChange(state) {
+    console.log('WebRTC Connection State:', state);
     if (state === 'connected') {
       this._setLiveState();
+    } else if (state === 'connecting') {
+      this.overlaySubtext.innerText = 'Establishing peer connection...';
+      this.streamStatusText.innerText = 'Connecting...';
     } else if (state === 'disconnected' || state === 'failed') {
       this.streamIndicator.className = 'pulse-dot idle';
       this.streamStatusText.innerText = 'Reconnecting...';
@@ -180,4 +198,3 @@ class ViewerController {
 // Bootstrap viewer on DOM load
 const viewer = new ViewerController();
 viewer.init();
-
