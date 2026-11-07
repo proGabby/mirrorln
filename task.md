@@ -6,7 +6,7 @@ This document outlines the step-by-step roadmap for building Mirrorln, an enterp
 
 ## Phase 1: Project Setup & Core Configuration
 - [x] Task 1.1: Initialize project repository, directory architecture, `.gitignore`, and base configuration.
-- [ ] Task 1.2: Define application configuration module and ICE server matrix.
+- [x] Task 1.2: Define application configuration module and ICE server matrix.
 - [ ] Task 1.3: Implement utility modules for system logging and network interface resolution.
 
 ---
