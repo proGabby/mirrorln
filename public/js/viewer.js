@@ -61,6 +61,19 @@ class ViewerController {
       this.wsClient.send('join-room', { roomId: this.roomId });
     });
 
+    this.wsClient.on('reconnected', () => {
+      console.log('Reconnected to signaling hub. Re-joining room...');
+      if (this.roomId) {
+        this.streamStatusText.innerText = 'Re-joining room...';
+        this.wsClient.send('join-room', { roomId: this.roomId });
+      }
+    });
+
+    this.wsClient.on('close', () => {
+      this.streamStatusText.innerText = 'Reconnecting...';
+      this.streamIndicator.className = 'pulse-dot idle';
+    });
+
     this.wsClient.on('room-joined', ({ iceServers }) => {
       this.webrtcManager.setIceServers(iceServers);
       this.webrtcManager.init();

@@ -16,7 +16,9 @@
     "clean-architecture"
   ],
   "author": "Mirrorln Team",
-  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
   "engines": {
     "node": ">=18.0.0"
   }

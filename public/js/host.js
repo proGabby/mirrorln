@@ -60,6 +60,20 @@ class HostController {
       this._updateStatus('Ready', 'idle');
     });
 
+    this.wsClient.on('reconnected', () => {
+      console.log('Reconnected to signaling hub.');
+      if (this.currentRoomId) {
+        this.wsClient.send('create-room', { preferredId: this.currentRoomId });
+        this._updateStatus('Broadcasting', 'live');
+      }
+    });
+
+    this.wsClient.on('close', () => {
+      if (this.currentRoomId) {
+        this._updateStatus('Reconnecting...', 'idle');
+      }
+    });
+
     this.wsClient.on('room-created', ({ roomId, iceServers }) => {
       this.currentRoomId = roomId;
       this.webrtcManager.setIceServers(iceServers);
