@@ -12,7 +12,7 @@ This document outlines the step-by-step roadmap for building Mirrorln, an enterp
 ---
 
 ## Phase 2: Signaling Server & Communication Layer
-- [ ] Task 2.1: Implement RFC 6455 WebSocket protocol parser and connection abstraction.
+- [x] Task 2.1: Implement RFC 6455 WebSocket protocol parser and connection abstraction.
 - [ ] Task 2.2: Implement WebSocket server and HTTP upgrade lifecycle handler.
 - [ ] Task 2.3: Implement in-memory Room and Viewer state management.
 - [ ] Task 2.4: Implement WebRTC signaling event dispatcher for SDP offers, answers, and ICE candidate exchange.
