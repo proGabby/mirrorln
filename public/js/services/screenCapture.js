@@ -17,8 +17,24 @@ export class ScreenCaptureService {
    * @returns {Promise<MediaStream>}
    */
   async startCapture(includeAudio = true) {
+    // 1. Check for Secure Context (W3C requirement for mediaDevices)
+    if (window.isSecureContext === false) {
+      throw new Error(
+        'Insecure context: Screen capture requires HTTPS or localhost. If you are accessing via your network IP (e.g. 192.168.x.x), please open http://localhost:3000 on this computer instead.'
+      );
+    }
+
+    // 2. Check for mobile browser limitations
+    const isMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-      throw new Error('Screen capture is not supported in this browser.');
+      if (isMobile) {
+        throw new Error(
+          'Broadcasting your screen from an iOS browser is restricted by Apple. Please start the broadcast from a Mac or PC desktop browser (your phone can still view the stream!).'
+        );
+      }
+      throw new Error(
+        'Screen capture is not supported in this browser. Please open in Google Chrome, Brave, Edge, Safari, or Firefox on desktop.'
+      );
     }
 
     const constraints = {
