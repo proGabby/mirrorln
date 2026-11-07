@@ -61,6 +61,10 @@ class SignalingHub {
         this._onStopBroadcast(connection);
         break;
 
+      case 'kick-viewer':
+        this._onKickViewer(connection, data);
+        break;
+
       default:
         logger.debug(`Unknown signaling type received: ${type}`);
     }
@@ -161,6 +165,29 @@ class SignalingHub {
         data: {
           candidate,
           senderId: connection.id
+        }
+      });
+    }
+  }
+
+  _onKickViewer(connection, { targetViewerId }) {
+    const room = roomManager.getRoom(connection.roomId);
+    if (!room || room.hostConnection !== connection) return;
+
+    const viewer = room.getViewer(targetViewerId);
+    if (viewer) {
+      viewer.send({
+        type: 'error',
+        data: { message: 'You have been disconnected by the broadcaster.' }
+      });
+      viewer.close(1008, 'Removed by Host');
+      room.removeViewer(targetViewerId);
+
+      connection.send({
+        type: 'viewer-left',
+        data: {
+          viewerId: targetViewerId,
+          viewerCount: room.viewerCount
         }
       });
     }
