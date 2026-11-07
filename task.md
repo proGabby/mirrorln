@@ -43,6 +43,6 @@ This document outlines the step-by-step roadmap for building Mirrorln, an enterp
 ---
 
 ## Phase 6: NAT Traversal, Security Controls & Session Verification
-- [ ] Task 6.1: Configure STUN/TURN fallback matrix for global internet routing.
+- [x] Task 6.1: Configure STUN/TURN fallback matrix for global internet routing.
 - [ ] Task 6.2: Implement host admission control and session termination safeguards.
 - [ ] Task 6.3: Comprehensive end-to-end testing and concurrency verification documentation.
