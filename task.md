@@ -37,7 +37,7 @@ This document outlines the step-by-step roadmap for building Mirrorln, an enterp
 
 ## Phase 5: Mobile-First Viewer Client
 - [x] Task 5.1: Build mobile-first viewer UI with inline player and controls.
-- [ ] Task 5.2: Implement viewer WebRTC client receiver handling stream playback and autoplay audio policies.
+- [x] Task 5.2: Implement viewer WebRTC client receiver handling stream playback and autoplay audio policies.
 - [ ] Task 5.3: Implement Viewer UI controller with stream recovery and reconnection logic.
 
 ---
