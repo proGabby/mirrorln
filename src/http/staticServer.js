@@ -85,3 +85,4 @@ class StaticServer {
 }
 
 module.exports = new StaticServer();
+

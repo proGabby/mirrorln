@@ -174,3 +174,4 @@ class HostController {
 // Bootstrap controller on DOM load
 const controller = new HostController();
 controller.init();
+

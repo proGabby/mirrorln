@@ -53,3 +53,4 @@ In modern operating systems (macOS WindowServer / Quartz, Windows Desktop Window
 2. Share your screen in the meeting.
 3. Keep the meeting active, return to Mirrorln (`http://localhost:3000`), and click **Select Screen & Broadcast**.
 4. Confirm both streams transmit smoothly without dropped frames or permission warnings.
+

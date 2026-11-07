@@ -180,3 +180,4 @@ class ViewerController {
 // Bootstrap viewer on DOM load
 const viewer = new ViewerController();
 viewer.init();
+

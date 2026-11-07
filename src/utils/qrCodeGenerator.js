@@ -287,3 +287,4 @@ class QrCodeGenerator {
 }
 
 module.exports = new QrCodeGenerator();
+

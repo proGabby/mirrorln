@@ -30,3 +30,4 @@ use-auth-secret
 static-auth-secret=your_strong_secret
 realm=your_domain.com
 ```
+

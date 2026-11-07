@@ -74,3 +74,4 @@ export class ScreenCaptureService {
     return this.stream ? this.stream.getTracks() : [];
   }
 }
+
