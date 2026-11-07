@@ -20,7 +20,7 @@ This document outlines the step-by-step roadmap for building Mirrorln, an enterp
 ---
 
 ## Phase 3: HTTP Server & Static Asset Delivery
-- [ ] Task 3.1: Build static asset delivery engine with MIME type mapping and path traversal protection.
+- [x] Task 3.1: Build static asset delivery engine with MIME type mapping and path traversal protection.
 - [ ] Task 3.2: Implement HTTP API routing and application bootstrap entrypoint.
 - [ ] Task 3.3: Implement pure vector SVG QR code generation engine.
 
