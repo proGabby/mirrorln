@@ -156,9 +156,15 @@ class ViewerController {
     if (state === 'connected') {
       this._setLiveState();
     } else if (state === 'connecting') {
-      this.overlaySubtext.innerText = 'Establishing peer connection...';
+      this.overlayHeading.innerText = 'Connecting...';
+      this.overlaySubtext.innerText = 'Establishing peer-to-peer media channel...';
       this.streamStatusText.innerText = 'Connecting...';
-    } else if (state === 'disconnected' || state === 'failed') {
+    } else if (state === 'failed') {
+      this._showError(
+        'Connection Blocked (Firewall/NAT)',
+        'Your local router or mobile carrier blocked peer-to-peer UDP traffic. Please add a TURN relay server in Render settings.'
+      );
+    } else if (state === 'disconnected') {
       this.streamIndicator.className = 'pulse-dot idle';
       this.streamStatusText.innerText = 'Reconnecting...';
     }

@@ -55,6 +55,31 @@ export class WebRtcHostManager {
       });
     }
 
+    // Prioritize H.264 video codec for iOS Safari and mobile compatibility
+    try {
+      const transceivers = pc.getTransceivers();
+      for (const t of transceivers) {
+        if (t.sender && t.sender.track && t.sender.track.kind === 'video') {
+          if (typeof RTCRtpSender.getCapabilities === 'function') {
+            const capabilities = RTCRtpSender.getCapabilities('video');
+            if (capabilities && capabilities.codecs) {
+              const h264Codecs = capabilities.codecs.filter(
+                (c) => c.mimeType.toLowerCase() === 'video/h264'
+              );
+              const otherCodecs = capabilities.codecs.filter(
+                (c) => c.mimeType.toLowerCase() !== 'video/h264'
+              );
+              if (h264Codecs.length > 0 && typeof t.setCodecPreferences === 'function') {
+                t.setCodecPreferences([...h264Codecs, ...otherCodecs]);
+              }
+            }
+          }
+        }
+      }
+    } catch (codecErr) {
+      console.warn('Could not enforce H.264 codec preference:', codecErr);
+    }
+
     // ICE candidate gathering
     pc.onicecandidate = (event) => {
       if (event.candidate && this.callbacks.onIceCandidate) {
