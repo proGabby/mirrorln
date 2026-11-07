@@ -18,5 +18,6 @@ npm-debug.log*
 .idea/
 *.swp
 *.swo
+# Project Task Tracking
 task.md
-/Users/macbookpro/Documents/inimfon/mirrorln/task.md
+
