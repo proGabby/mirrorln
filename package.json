@@ -1,0 +1,22 @@
+{
+  "name": "mirrorln",
+  "version": "1.0.0",
+  "description": "Zero-install, QR-code based WebRTC screen mirroring application",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
+  },
+  "keywords": [
+    "webrtc",
+    "screen-sharing",
+    "qr-code",
+    "peer-to-peer",
+    "clean-architecture"
+  ],
+  "author": "Mirrorln Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
