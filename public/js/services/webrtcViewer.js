@@ -40,39 +40,39 @@ export class WebRtcViewerManager {
 
     // Remote media track arrives
     this.pc.ontrack = (event) => {
-      if (this.callbacks.onRemoteStream) {
-        if (event.streams && event.streams[0]) {
-          this.callbacks.onRemoteStream(event.streams[0]);
-        } else if (event.track) {
-          // Fallback if streams array is empty in certain mobile WebKit engines
-          const fallbackStream = new MediaStream([event.track]);
-          this.callbacks.onRemoteStream(fallbackStream);
+        if (this.callbacks.onRemoteStream) {
+          if (event.streams && event.streams[0]) {
+            this.callbacks.onRemoteStream(event.streams[0]);
+          } else if (event.track) {
+            // Fallback if streams array is empty in certain mobile WebKit engines
+            const fallbackStream = new MediaStream([event.track]);
+            this.callbacks.onRemoteStream(fallbackStream);
+          }
         }
-      }
-    };
+      };
 
-    // Local ICE candidate generated
-    this.pc.onicecandidate = (event) => {
-      if (event.candidate && this.callbacks.onIceCandidate) {
-        this.callbacks.onIceCandidate(event.candidate);
-      }
-    };
-
-    // Connection lifecycle monitoring
-    this.pc.onconnectionstatechange = () => {
-      if (this.callbacks.onConnectionStateChange && this.pc) {
-        this.callbacks.onConnectionStateChange(this.pc.connectionState);
-      }
-    };
-
-    this.pc.oniceconnectionstatechange = () => {
-      if (this.pc && (this.pc.iceConnectionState === 'connected' || this.pc.iceConnectionState === 'completed')) {
-        if (this.callbacks.onConnectionStateChange) {
-          this.callbacks.onConnectionStateChange('connected');
+      // Local ICE candidate generated
+      this.pc.onicecandidate = (event) => {
+        if (event.candidate && this.callbacks.onIceCandidate) {
+          this.callbacks.onIceCandidate(event.candidate);
         }
+      };
+
+      // Connection lifecycle monitoring
+      this.pc.onconnectionstatechange = () => {
+          if (this.callbacks.onConnectionStateChange && this.pc) {
+            this.callbacks.onConnectionStateChange(this.pc.connectionState);
+          }
+        };
+
+        this.pc.oniceconnectionstatechange = () => {
+          if (this.pc && (this.pc.iceConnectionState === 'connected' || this.pc.iceConnectionState === 'completed')) {
+            if (this.callbacks.onConnectionStateChange) {
+              this.callbacks.onConnectionStateChange('connected');
+            }
+          }
+        };
       }
-    };
-  }
 
   /**
    * Processes the SDP offer received from the host and creates an answer.
@@ -81,54 +81,54 @@ export class WebRtcViewerManager {
    * @returns {Promise<RTCSessionDescriptionInit>}
    */
   async handleOffer(sdp) {
-    if (!this.pc) {
-      this.init();
-    }
+        if (!this.pc) {
+          this.init();
+        }
 
-    await this.pc.setRemoteDescription(new RTCSessionDescription(sdp));
-    this.isRemoteDescriptionSet = true;
+        await this.pc.setRemoteDescription(new RTCSessionDescription(sdp));
+        this.isRemoteDescriptionSet = true;
 
-    // Flush any ICE candidates that arrived early
-    while (this.candidateQueue.length > 0) {
-      const candidate = this.candidateQueue.shift();
-      try {
-        await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (err) {
-        console.warn('Failed to add queued ICE candidate on viewer:', err);
+        // Flush any ICE candidates that arrived early
+        while (this.candidateQueue.length > 0) {
+          const candidate = this.candidateQueue.shift();
+          try {
+            await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (err) {
+            console.warn('Failed to add queued ICE candidate on viewer:', err);
+          }
+        }
+
+        const answer = await this.pc.createAnswer();
+        await this.pc.setLocalDescription(answer);
+
+        return this.pc.localDescription;
       }
-    }
-
-    const answer = await this.pc.createAnswer();
-    await this.pc.setLocalDescription(answer);
-
-    return this.pc.localDescription;
-  }
 
   /**
    * Adds an ICE candidate or queues it if remote description is still pending.
    * @param {RTCIceCandidateInit} candidate 
    */
   async handleIceCandidate(candidate) {
-    if (!candidate) return;
+          if (!candidate) return;
 
-    if (!this.pc || !this.isRemoteDescriptionSet) {
-      this.candidateQueue.push(candidate);
-      return;
-    }
+          if (!this.pc || !this.isRemoteDescriptionSet) {
+            this.candidateQueue.push(candidate);
+            return;
+          }
 
-    try {
-      await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
-    } catch (err) {
-      console.warn('Failed to add remote ICE candidate on viewer:', err);
-    }
-  }
+          try {
+            await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (err) {
+            console.warn('Failed to add remote ICE candidate on viewer:', err);
+          }
+        }
 
-  close() {
-    if (this.pc) {
-      this.pc.close();
-      this.pc = null;
-    }
-    this.isRemoteDescriptionSet = false;
-    this.candidateQueue = [];
-  }
-}
+        close() {
+          if (this.pc) {
+            this.pc.close();
+            this.pc = null;
+          }
+          this.isRemoteDescriptionSet = false;
+          this.candidateQueue = [];
+        }
+      }
